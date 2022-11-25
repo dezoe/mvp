@@ -17,7 +17,7 @@ struct MVPApp: App {
 }
 
 
-struct lintTest {
+struct LintTest {
     
     var i = 0
     
