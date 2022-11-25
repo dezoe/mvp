@@ -1,0 +1,33 @@
+name: Linting
+
+on: pull_request
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: SwiftLint Version
+        run: echo "SWIFTLINT_VERSION=0.49.1" >> $GITHUB_ENV
+      - uses: actions/cache@v2
+        with:
+          path: .build/release/swiftlint
+          key: $-linting-swiftlint-$
+      - name: Build realm/SwiftLint
+        run: |
+          if [ -f ".build/release/swiftlint" ]; then
+            sudo cp -f .build/release/swiftlint /usr/local/bin/swiftlint
+          else
+            git clone --depth 1 --branch main https://github.com/realm/SwiftLint
+            cd SwiftLint
+            swift build --disable-sandbox -c release
+            mv .build .. && cd ..
+            rm -rf SwiftLint
+            sudo cp -f .build/release/swiftlint /usr/local/bin/swiftlint
+          fi
+      - name: SwiftLint
+        run: |
+          swiftlint --version
+          swiftlint lint --strict --config .swiftlint.yml --quiet
+        env:
+          LINUX_SOURCEKIT_LIB_PATH: /usr/share/swift/usr/lib # FIXED: Fatal error: Loading libsourcekitdInProc.so failed
