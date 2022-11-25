@@ -15,3 +15,12 @@ struct MVPApp: App {
         }
     }
 }
+
+
+struct lintTest {
+    
+    var i = 0
+    
+    
+    
+}
